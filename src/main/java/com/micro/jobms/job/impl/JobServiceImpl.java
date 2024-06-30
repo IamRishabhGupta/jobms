@@ -40,7 +40,7 @@ public class JobServiceImpl implements JobService {
         jobWithCompanyDTO.setJob(job);
         //RestTemplate restTemplate = new RestTemplate();
         Company company = restTemplate.getForObject(
-                "http://company-service:8081/companies/" + job.getCompanyId(),
+                "http://COMPANY-SERVICE:8081/companies/" + job.getCompanyId(),
                 Company.class);
         jobWithCompanyDTO.setCompany(company);
 
@@ -53,8 +53,9 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Job getJobById(Long id) {
-        return jobRepository.findById(id).orElse(null);
+    public JobWithCompanyDTO getJobById(Long id) {
+        Job job = jobRepository.findById(id).orElse(null);
+        return convertToDto(job);
     }
 
     @Override
