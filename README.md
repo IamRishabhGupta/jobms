@@ -1,6 +1,4 @@
-Sure! Here's a template for a GitHub README file for your job microservice:
 
----
 
 # Job Microservice
 
