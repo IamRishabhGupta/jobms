@@ -5,6 +5,7 @@ import com.micro.jobms.job.JobRepository;
 import com.micro.jobms.job.JobService;
 import com.micro.jobms.job.dto.JobWithCompanyDTO;
 import com.micro.jobms.job.external.Company;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,6 +19,9 @@ public class JobServiceImpl implements JobService {
     // private List<Job> jobs = new ArrayList<>();
     JobRepository jobRepository;
 
+    @Autowired
+    RestTemplate restTemplate;
+
     public JobServiceImpl(JobRepository jobRepository) {
         this.jobRepository = jobRepository;
     }
@@ -27,28 +31,19 @@ public class JobServiceImpl implements JobService {
         List<Job> jobs = jobRepository.findAll();
         List<JobWithCompanyDTO> jobWithCompanyDTOs = new ArrayList<>();
 
-
-
-
-
-//        return jobWithCompanyDTOs;
-        return jobs.stream().map(this::convertToDto).collect(Collectors.toUnmodifiableList());
+        return jobs.stream().map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    private JobWithCompanyDTO convertToDto(Job job)
-    {
-        RestTemplate restTemplate = new RestTemplate();
-//        for (Job job : jobs) {
-            JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
-            jobWithCompanyDTO.setJob(job);
+    private JobWithCompanyDTO convertToDto(Job job) {
+        JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
+        jobWithCompanyDTO.setJob(job);
+        //RestTemplate restTemplate = new RestTemplate();
+        Company company = restTemplate.getForObject(
+                "http://company-service:8081/companies/" + job.getCompanyId(),
+                Company.class);
+        jobWithCompanyDTO.setCompany(company);
 
-            Company company = restTemplate.getForObject(
-                    "http://localhost:8081/companies/" + job.getCompanyId(),
-                    Company.class);
-            jobWithCompanyDTO.setCompany(company);
-
-//            jobWithCompanyDTOs.add(jobWithCompanyDTO);
-//        }
         return jobWithCompanyDTO;
     }
 
