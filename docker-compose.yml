@@ -31,6 +31,14 @@ services:
       - spring-network
     restart: unless-stopped
 
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+    networks:
+    - spring-network
+
 networks:
   spring-network:
     driver: bridge
@@ -38,3 +46,5 @@ networks:
 volumes:
   postgres:
   pgadmin:
+
+
