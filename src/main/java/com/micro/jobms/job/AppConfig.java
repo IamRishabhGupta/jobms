@@ -14,3 +14,5 @@ public class AppConfig {
         return new RestTemplate();
     }
 }
+
+//can remove this file as now using openfeign as loadbalancing is managed there
