@@ -9,6 +9,7 @@ import com.micro.jobms.job.dto.JobDTO;
 import com.micro.jobms.job.external.Company;
 import com.micro.jobms.job.external.Review;
 import com.micro.jobms.job.mapper.JobMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -40,6 +41,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @CircuitBreaker(name = "companyBreaker")
     public List<JobDTO> findAll() {
         List<Job> jobs = jobRepository.findAll();
         List<JobDTO> jobDTOS = new ArrayList<>();
@@ -50,7 +52,6 @@ public class JobServiceImpl implements JobService {
 
     private JobDTO convertToDto(Job job) {
         Company company = companyClient.getCompany(job.getCompanyId());
-        //object that we created above and used this.comCli
         List<Review> reviews = reviewClient.getReviews(job.getCompanyId());
 
         JobDTO jobDTO = JobMapper.
